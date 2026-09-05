@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient'; // Ensure this matches your actual project path
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function RegistrationPage() {
@@ -34,7 +33,6 @@ export default function RegistrationPage() {
     setPlayers(updated);
   };
 
-  // Step 1 Validation before moving to Step 2
   const handleNextToStep2 = () => {
     setError('');
     if (
@@ -50,7 +48,6 @@ export default function RegistrationPage() {
     setStep(2);
   };
 
-  // Step 2 Validation before moving to Step 3
   const handleNextToStep3 = () => {
     setError('');
     const hasEmptyPlayer = players.some((p) => !p.name.trim());
@@ -66,66 +63,62 @@ export default function RegistrationPage() {
     setLoading(true);
     setError('');
 
-    // Step 3 Validation (Payment Info)
     if (!formData.trx_id.trim()) {
       setError('Please enter a valid Transaction ID (TrxID).');
       setLoading(false);
       return;
     }
 
-    // 1. Insert Registration
-    const { data: regData, error: regError } = await supabase
-      .from('registrations')
-      .insert([
-        {
-          team_name: formData.team_name.trim(),
-          institution_type: formData.institution_type,
-          institution_name: formData.institution_name.trim(),
-          batch_info: formData.batch_info.trim(),
-          captain_name: formData.captain_name.trim(),
-          phone: formData.phone.trim(),
-          email: formData.email.trim(),
-          payment_method: formData.payment_method,
-          amount: 3650.00,
-          trx_id: formData.trx_id.trim().toUpperCase(),
-          status: 'pending',
+    try {
+      // Structure team data payload
+      const teamPayload = {
+        team_name: formData.team_name.trim(),
+        institution_type: formData.institution_type,
+        institution_name: formData.institution_name.trim(),
+        batch_info: formData.batch_info.trim(),
+        captain_name: formData.captain_name.trim(),
+        phone: formData.phone.trim(),
+        email: formData.email.trim(),
+        payment_method: formData.payment_method,
+        amount: 3650.00,
+        trx_id: formData.trx_id.trim().toUpperCase(),
+        status: 'pending',
+      };
+
+      // Structure players data payload
+      const playersPayload = players.map((p, idx) => ({
+        player_name: p.name.trim(),
+        role: p.role,
+        player_number: idx + 1,
+      }));
+
+      // Route through the secure API endpoint
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      ])
-      .select()
-      .single();
+        body: JSON.stringify({
+          teamData: teamPayload,
+          playersData: playersPayload,
+        }),
+      });
 
-    if (regError) {
-      setLoading(false);
-      if (regError.code === '23505') {
-        setError('This Transaction ID (TrxID) has already been submitted.');
-      } else {
-        setError(`Submission failed: ${regError.message}`);
+      const result = await response.json();
+
+      if (!response.ok) {
+        if (result.error && result.error.includes('23505')) {
+          throw new Error('This Transaction ID (TrxID) has already been submitted.');
+        }
+        throw new Error(result.error || 'Submission failed');
       }
-      return;
-    }
 
-    if (!regData) {
-      setLoading(false);
-      setError('Registration failed to return record reference. Please try again.');
-      return;
-    }
-
-    // 2. Insert 16 Players linked to registration ID
-    const playersToInsert = players.map((p, idx) => ({
-      registration_id: regData.id,
-      player_name: p.name.trim(),
-      role: p.role,
-      player_number: idx + 1,
-    }));
-
-    const { error: playersError } = await supabase.from('players').insert(playersToInsert);
-
-    setLoading(false);
-
-    if (playersError) {
-      setError('Team registered, but player listing had an error. Please contact support.');
-    } else {
       setSubmitted(true);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
+      setError(`Submission failed: ${errorMessage}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -149,7 +142,9 @@ export default function RegistrationPage() {
 
       {error && (
         <div className="mb-6 p-3 sm:p-4 bg-red-500/10 border border-red-500/30 text-red-400 text-xs sm:text-sm rounded-xl flex items-center gap-2">
-          <AlertCircle className="w-5 h-5 flex-shrink-0" />
+          <div className="shrink-0">
+            <AlertCircle className="w-5 h-5" />
+          </div>
           <span>{error}</span>
         </div>
       )}
@@ -273,7 +268,7 @@ export default function RegistrationPage() {
         {step === 2 && (
           <div className="space-y-4">
             <h3 className="text-xs sm:text-sm font-semibold text-yellow-400 mb-2">16 Squad Players (As per Rules)</h3>
-            <div className="max-h-[380px] overflow-y-auto space-y-3 pr-1 sm:pr-2">
+            <div className="max-h-95 overflow-y-auto space-y-3 pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full">
               {players.map((player, idx) => (
                 <div key={idx} className="flex flex-col sm:flex-row gap-2 items-start sm:items-center bg-slate-800 p-2.5 sm:p-3 rounded-lg border border-slate-700 text-xs">
                   <div className="flex items-center gap-2 w-full sm:flex-1">
