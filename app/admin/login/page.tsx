@@ -1,10 +1,15 @@
 'use client';
 
+// Forces runtime evaluation to prevent build-time static generation checks on auth routes
+export const dynamic = 'force-dynamic';
+
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { ShieldCheck, Lock, Mail, Loader2, AlertCircle } from 'lucide-react';
 
 export default function AdminLogin() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,25 +23,28 @@ export default function AdminLogin() {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
-        password: password.trim(),
+        password: password, // Retain exact password without trimming spaces
       });
 
       if (error) {
         setErrorMsg(error.message);
+        setLoading(false);
         return;
       }
 
       if (data?.session) {
-        // Hard navigation guarantees fresh session state on dashboard load
-        window.location.href = '/admin/dashboard';
+        // Refresh router cache and push to dashboard cleanly
+        router.refresh();
+        router.push('/admin/dashboard');
       } else {
         setErrorMsg('Session could not be established. Please try again.');
+        setLoading(false);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Login Exception:', err);
-      setErrorMsg(err?.message || 'Connection failed.');
-    } finally {
-      setLoading(false); // Guarantees button never gets stuck spinning
+      const message = err instanceof Error ? err.message : 'Connection failed.';
+      setErrorMsg(message);
+      setLoading(false);
     }
   };
 

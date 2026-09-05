@@ -30,19 +30,21 @@ export async function POST(request: Request) {
 
     if (teamId) {
       const { error: dbError } = await supabase
-        .from('teams')
+        .from('registrations')
         .update({ status })
         .eq('id', teamId);
 
       if (dbError) throw dbError;
     }
 
-    // 2. Initialize Resend with fallback string for build safety
+    // 2. Initialize Resend
     const resendApiKey = process.env.RESEND_API_KEY || 're_dummy_build_key';
     const resend = new Resend(resendApiKey);
-    const senderEmail = process.env.SENDER_EMAIL || 'Orient Blast <info@orientblast.dev.cv>';
 
-    // 3. Create element via React.createElement (bypasses JSX type mismatches)
+    // Default to Resend's testing sender unless a verified custom domain sender is defined in env
+    const senderEmail = process.env.SENDER_EMAIL || 'Orient Blast <onboarding@resend.dev>';
+
+    // 3. Render React email component safely
     const emailElement = React.createElement(StatusUpdateEmail, {
       teamName: teamName || 'Team',
       status: status,
@@ -51,7 +53,7 @@ export async function POST(request: Request) {
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: senderEmail,
       to: captainEmail,
-      subject: `Orient Blast Registration: ${status.toUpperCase()}`,
+      subject: `Orient Blast Registration: ${String(status).toUpperCase()}`,
       react: emailElement,
     });
 
