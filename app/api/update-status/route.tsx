@@ -18,7 +18,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 1. Initialize Supabase safely
+    // 1. Initialize Supabase
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
@@ -38,13 +38,23 @@ export async function POST(request: Request) {
     }
 
     // 2. Initialize Resend
-    const resendApiKey = process.env.RESEND_API_KEY || 're_dummy_build_key';
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (!resendApiKey) {
+      throw new Error('RESEND_API_KEY is missing in environment variables');
+    }
+
     const resend = new Resend(resendApiKey);
 
-    // Default to Resend's testing sender unless a verified custom domain sender is defined in env
-    const senderEmail = process.env.SENDER_EMAIL || 'Orient Blast <onboarding@resend.dev>';
+    // Use verified production sender domain or environment variable fallback
+    const senderEmail = process.env.SENDER_EMAIL || 'Orient Blast <noreply@orientblast.dev.cv>';
 
-    // 3. Render React email component safely
+    // 3. Customize Subject for Rejected vs Confirmed
+    const isRejected = String(status).toLowerCase() === 'rejected';
+    const emailSubject = isRejected
+      ? `Registration Update: Your Team ${teamName || ''} Registration Was Rejected`
+      : `Registration Update: Your Team ${teamName || ''} Is ${String(status).toUpperCase()}`;
+
+    // 4. Render React Email Template
     const emailElement = React.createElement(StatusUpdateEmail, {
       teamName: teamName || 'Team',
       status: status,
@@ -53,7 +63,7 @@ export async function POST(request: Request) {
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: senderEmail,
       to: captainEmail,
-      subject: `Orient Blast Registration: ${String(status).toUpperCase()}`,
+      subject: emailSubject,
       react: emailElement,
     });
 
