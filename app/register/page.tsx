@@ -130,7 +130,9 @@ export default function RegistrationPage() {
         <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
           Your payment of <strong>৳3,650 BDT</strong> (TrxID: <span className="font-mono text-yellow-400 break-all">{formData.trx_id}</span>) is under review by organizers.
         </p>
-        <p className="text-[11px] sm:text-xs text-gray-400">Once confirmed, your team status will be updated to CONFIRMED.</p>
+        <p className="text-xs sm:text-sm text-slate-400 mt-4">
+            Once reviewed, your team status will be updated to <span className="font-semibold text-emerald-400">CONFIRMED</span> via email.
+            </p>
       </div>
     );
   }
