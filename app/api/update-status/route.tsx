@@ -38,13 +38,23 @@ export async function POST(request: Request) {
     }
 
     // 2. Initialize Resend
-    const resendApiKey = process.env.RESEND_API_KEY || 're_dummy_build_key';
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (!resendApiKey) {
+      throw new Error('RESEND_API_KEY environment variable is missing');
+    }
+
     const resend = new Resend(resendApiKey);
 
-    // Default to Resend's testing sender unless a verified custom domain sender is defined in env
+    // 3. Configure Sender & Recipient fallback
+    // Use onboarding@resend.dev unless SENDER_EMAIL is explicitly set in Vercel
     const senderEmail = process.env.SENDER_EMAIL || 'Orient Blast <onboarding@resend.dev>';
+    
+    // If using test onboarding email, fallback to your Resend account email to prevent 403 blocks
+    const targetRecipient = senderEmail.includes('onboarding@resend.dev')
+      ? (process.env.ADMIN_TEST_EMAIL || captainEmail)
+      : captainEmail;
 
-    // 3. Render React email component safely
+    // 4. Render React email component
     const emailElement = React.createElement(StatusUpdateEmail, {
       teamName: teamName || 'Team',
       status: status,
@@ -52,16 +62,20 @@ export async function POST(request: Request) {
 
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: senderEmail,
-      to: captainEmail,
+      to: targetRecipient,
       subject: `Orient Blast Registration: ${String(status).toUpperCase()}`,
       react: emailElement,
     });
 
-    if (emailError) throw emailError;
+    if (emailError) {
+      console.error('Resend API Error:', emailError);
+      throw new Error(emailError.message);
+    }
 
     return NextResponse.json({ success: true, data: emailData });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+    console.error('Update Status Route Failure:', errorMessage);
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
