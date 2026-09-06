@@ -70,7 +70,6 @@ export default function RegistrationPage() {
     }
 
     try {
-      // Structure team data payload
       const teamPayload = {
         team_name: formData.team_name.trim(),
         institution_type: formData.institution_type,
@@ -85,14 +84,12 @@ export default function RegistrationPage() {
         status: 'pending',
       };
 
-      // Structure players data payload
       const playersPayload = players.map((p, idx) => ({
         player_name: p.name.trim(),
         role: p.role,
         player_number: idx + 1,
       }));
 
-      // Route through the secure API endpoint
       const response = await fetch('/api/register', {
         method: 'POST',
         headers: {
@@ -124,35 +121,37 @@ export default function RegistrationPage() {
 
   if (submitted) {
     return (
-      <div className="max-w-lg mx-auto my-6 sm:my-12 p-5 sm:p-8 bg-slate-800 text-white rounded-2xl border border-slate-700 text-center space-y-4 px-4">
+      <div className="w-full max-w-xl mx-auto my-4 sm:my-10 p-5 sm:p-8 bg-slate-800 text-white rounded-2xl border border-slate-700 text-center space-y-4 px-4">
         <CheckCircle2 className="w-12 h-12 sm:w-16 sm:h-16 text-emerald-400 mx-auto" />
         <h2 className="text-xl sm:text-2xl font-bold">Registration Submitted!</h2>
         <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
           Your payment of <strong>৳3,650 BDT</strong> (TrxID: <span className="font-mono text-yellow-400 break-all">{formData.trx_id}</span>) is under review by organizers.
         </p>
         <p className="text-xs sm:text-sm text-slate-400 mt-4">
-            Once reviewed, your team status will be updated to <span className="font-semibold text-emerald-400">CONFIRMED</span> via email.
-            </p>
+          Once reviewed, your team status will be updated to <span className="font-semibold text-emerald-400">CONFIRMED</span> via email.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto my-4 sm:my-8 p-4 sm:p-6 bg-slate-900 text-white rounded-2xl border border-slate-800 shadow-xl">
-      <h1 className="text-xl sm:text-2xl font-bold text-center mb-1">Team Registration Form</h1>
-      <p className="text-center text-[11px] sm:text-xs text-yellow-400 mb-6 font-medium">THE ORIENT BLAST CRICKET CARNIVAL</p>
+    <div className="w-full max-w-2xl mx-auto my-2 sm:my-6 p-3.5 sm:p-7 bg-slate-900 text-white rounded-2xl border border-slate-800 shadow-xl">
+      <h1 className="text-lg sm:text-2xl font-bold text-center mb-1">Team Registration Form</h1>
+      <p className="text-center text-[10px] sm:text-xs text-yellow-400 mb-5 font-medium tracking-wide">
+        THE ORIENT BLAST CRICKET CARNIVAL
+      </p>
 
       {error && (
-        <div className="mb-6 p-3 sm:p-4 bg-red-500/10 border border-red-500/30 text-red-400 text-xs sm:text-sm rounded-xl flex items-center gap-2">
+        <div className="mb-5 p-3 sm:p-4 bg-red-500/10 border border-red-500/30 text-red-400 text-xs sm:text-sm rounded-xl flex items-center gap-2">
           <div className="shrink-0">
-            <AlertCircle className="w-5 h-5" />
+            <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
           <span>{error}</span>
         </div>
       )}
 
       {/* Responsive Step Indicator */}
-      <div className="flex items-center justify-between text-[11px] sm:text-sm font-semibold mb-6 sm:mb-8 border-b border-slate-800 pb-3 sm:pb-4 gap-1">
+      <div className="flex items-center justify-between text-[11px] sm:text-sm font-semibold mb-5 sm:mb-8 border-b border-slate-800 pb-3 gap-1">
         <span className={step >= 1 ? 'text-yellow-400' : 'text-gray-600'}>
           <span className="sm:hidden">1. Info</span>
           <span className="hidden sm:inline">1. Institution & Captain</span>
@@ -184,7 +183,7 @@ export default function RegistrationPage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
                 <label className="block text-xs font-semibold mb-1 text-gray-300">Institution Category *</label>
                 <select
@@ -212,7 +211,7 @@ export default function RegistrationPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
               <div>
                 <label className="block text-xs font-semibold mb-1 text-gray-300">Batch Info</label>
                 <input
@@ -259,7 +258,7 @@ export default function RegistrationPage() {
             <button
               type="button"
               onClick={handleNextToStep2}
-              className="w-full bg-yellow-500 text-slate-950 font-bold py-3 rounded-xl mt-4 hover:bg-yellow-400 transition text-sm sm:text-base"
+              className="w-full bg-yellow-500 text-slate-950 font-bold py-3 rounded-xl mt-4 hover:bg-yellow-400 transition text-xs sm:text-base"
             >
               Next: Enter Player List (16 Players)
             </button>
@@ -270,24 +269,22 @@ export default function RegistrationPage() {
         {step === 2 && (
           <div className="space-y-4">
             <h3 className="text-xs sm:text-sm font-semibold text-yellow-400 mb-2">16 Squad Players (As per Rules)</h3>
-            <div className="max-h-95 overflow-y-auto space-y-3 pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full">
+            <div className="max-h-[60vh] sm:max-h-96 overflow-y-auto space-y-2.5 pr-1 sm:pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full">
               {players.map((player, idx) => (
-                <div key={idx} className="flex flex-col sm:flex-row gap-2 items-start sm:items-center bg-slate-800 p-2.5 sm:p-3 rounded-lg border border-slate-700 text-xs">
-                  <div className="flex items-center gap-2 w-full sm:flex-1">
-                    <span className="w-5 font-bold text-gray-400 text-xs shrink-0">#{idx + 1}</span>
-                    <input
-                      type="text"
-                      required
-                      placeholder={`Player ${idx + 1} Name *`}
-                      value={player.name}
-                      onChange={(e) => handlePlayerChange(idx, 'name', e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded outline-none focus:border-yellow-500 text-xs sm:text-sm"
-                    />
-                  </div>
+                <div key={idx} className="flex flex-row gap-2 items-center bg-slate-800 p-2 sm:p-3 rounded-lg border border-slate-700 text-xs">
+                  <span className="w-5 font-bold text-gray-400 text-xs shrink-0 text-center">#{idx + 1}</span>
+                  <input
+                    type="text"
+                    required
+                    placeholder={`Player ${idx + 1} Name *`}
+                    value={player.name}
+                    onChange={(e) => handlePlayerChange(idx, 'name', e.target.value)}
+                    className="flex-1 bg-slate-900 border border-slate-700 px-2.5 py-2 rounded outline-none focus:border-yellow-500 text-xs sm:text-sm min-w-0"
+                  />
                   <select
                     value={player.role}
                     onChange={(e) => handlePlayerChange(idx, 'role', e.target.value)}
-                    className="w-full sm:w-auto bg-slate-900 border border-slate-700 px-2.5 py-2 rounded outline-none focus:border-yellow-500 text-xs shrink-0"
+                    className="w-28 sm:w-36 bg-slate-900 border border-slate-700 px-2 py-2 rounded outline-none focus:border-yellow-500 text-xs shrink-0"
                   >
                     <option value="Batsman">Batsman</option>
                     <option value="Bowler">Bowler</option>
@@ -323,9 +320,9 @@ export default function RegistrationPage() {
         {/* STEP 3 */}
         {step === 3 && (
           <div className="space-y-4">
-            <div className="bg-pink-950/30 border border-pink-500/30 p-4 rounded-xl text-xs space-y-3">
+            <div className="bg-pink-950/30 border border-pink-500/30 p-3.5 sm:p-4 rounded-xl text-xs space-y-3">
               <div className="flex items-center justify-between border-b border-pink-500/20 pb-2">
-                <span className="bg-pink-600 text-white font-bold text-[11px] px-2.5 py-0.5 rounded">
+                <span className="bg-pink-600 text-white font-bold text-[10px] sm:text-[11px] px-2 py-0.5 rounded">
                   bKash Personal
                 </span>
                 <span className="font-bold text-yellow-400 text-xs">
