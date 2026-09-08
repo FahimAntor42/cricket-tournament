@@ -16,7 +16,7 @@ export default function HomePage() {
           CRICKET CARNIVAL
         </p>
         <p className="text-xs sm:text-sm text-gray-400 mt-3 max-w-xl mx-auto leading-relaxed">
-          One Match. One Festival. One Legacy. All Open Categories, colleges, universities & medical colleges come together on one platform.
+          One Match. One Festival. One Legacy. All Open Categories, Colleges, Universities & Medical Colleges come together on one platform.
         </p>
 
         <div className="mt-6 sm:mt-8 flex justify-center">
