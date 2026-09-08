@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { teamId, status, captainEmail, teamName } = body;
+    const { teamId, status, captainEmail, teamName, institutionType } = body;
 
     if (!status || !captainEmail) {
       return NextResponse.json(
@@ -23,53 +23,65 @@ export async function POST(request: Request) {
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
     if (!supabaseUrl || !supabaseServiceKey) {
-      throw new Error('Supabase environment variables are missing');
+      return NextResponse.json(
+        { error: 'Supabase environment variables are missing' },
+        { status: 500 }
+      );
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // 2. Update status in Supabase DB first
     if (teamId) {
       const { error: dbError } = await supabase
         .from('registrations')
-        .update({ status })
+        .update({ status: String(status).toLowerCase() })
         .eq('id', teamId);
 
-      if (dbError) throw dbError;
+      if (dbError) {
+        console.error('Supabase DB Update Error:', dbError);
+        return NextResponse.json({ error: dbError.message }, { status: 500 });
+      }
     }
 
-    // 2. Initialize Resend
+    // 3. Dispatch Email asynchronously (Non-blocking execution)
     const resendApiKey = process.env.RESEND_API_KEY;
-    if (!resendApiKey) {
-      throw new Error('RESEND_API_KEY is missing in environment variables');
+
+    if (resendApiKey) {
+      const resend = new Resend(resendApiKey);
+      const senderEmail = process.env.SENDER_EMAIL || 'Orient Blast <noreply@orientblast.dev.cv>';
+      const normalizedStatus = String(status).toLowerCase().trim();
+      const isRejected = normalizedStatus === 'rejected';
+
+      const emailSubject = isRejected
+        ? `Registration Update: Your Team ${teamName || ''} Registration Was Rejected`
+        : `🎉 Registration Confirmed: Team ${teamName || ''} is Approved!`;
+
+      const emailElement = React.createElement(StatusUpdateEmail, {
+        teamName: teamName || 'Team',
+        status: normalizedStatus,
+        institutionType: institutionType || '',
+      });
+
+      // Fire and forget (allows API response to return instantly to UI)
+      resend.emails.send({
+        from: senderEmail,
+        to: captainEmail,
+        subject: emailSubject,
+        react: emailElement,
+      }).then(({ data, error }) => {
+        if (error) {
+          console.error('Background Resend Error:', error);
+        } else {
+          console.log('Background Email Sent successfully:', data?.id);
+        }
+      }).catch((err) => {
+        console.error('Background Email Execution Failure:', err);
+      });
     }
 
-    const resend = new Resend(resendApiKey);
-
-    // Use verified production sender domain or environment variable fallback
-    const senderEmail = process.env.SENDER_EMAIL || 'Orient Blast <noreply@orientblast.dev.cv>';
-
-    // 3. Customize Subject for Rejected vs Confirmed
-    const isRejected = String(status).toLowerCase() === 'rejected';
-    const emailSubject = isRejected
-      ? `Registration Update: Your Team ${teamName || ''} Registration Was Rejected`
-      : `Registration Update: Your Team ${teamName || ''} Is ${String(status).toUpperCase()}`;
-
-    // 4. Render React Email Template
-    const emailElement = React.createElement(StatusUpdateEmail, {
-      teamName: teamName || 'Team',
-      status: status,
-    });
-
-    const { data: emailData, error: emailError } = await resend.emails.send({
-      from: senderEmail,
-      to: captainEmail,
-      subject: emailSubject,
-      react: emailElement,
-    });
-
-    if (emailError) throw emailError;
-
-    return NextResponse.json({ success: true, data: emailData });
+    // Respond to frontend immediately without waiting for SMTP handshakes
+    return NextResponse.json({ success: true, message: 'Status updated successfully' });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
