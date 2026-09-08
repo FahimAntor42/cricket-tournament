@@ -9,12 +9,12 @@ export default function RegistrationPage() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
 
-  // Main Registration Form
+  // Main Registration Form State
   const [formData, setFormData] = useState({
     team_name: '',
-    institution_type: 'College',
-    institution_name: '',
-    batch_info: '',
+    institution_type: 'Open Category',
+    institution_name: 'N/A',
+    batch_info: 'Open',
     captain_name: '',
     phone: '',
     email: '',
@@ -35,9 +35,11 @@ export default function RegistrationPage() {
 
   const handleNextToStep2 = () => {
     setError('');
+    const isOpenCategory = formData.institution_type === 'Open Category';
+
     if (
       !formData.team_name.trim() ||
-      !formData.institution_name.trim() ||
+      (!isOpenCategory && !formData.institution_name.trim()) ||
       !formData.captain_name.trim() ||
       !formData.phone.trim() ||
       !formData.email.trim()
@@ -134,6 +136,8 @@ export default function RegistrationPage() {
     );
   }
 
+  const isOpenCategory = formData.institution_type === 'Open Category';
+
   return (
     <div className="w-full max-w-2xl mx-auto my-2 sm:my-6 p-3.5 sm:p-7 bg-slate-900 text-white rounded-2xl border border-slate-800 shadow-xl">
       <h1 className="text-lg sm:text-2xl font-bold text-center mb-1">Team Registration Form</h1>
@@ -154,7 +158,7 @@ export default function RegistrationPage() {
       <div className="flex items-center justify-between text-[11px] sm:text-sm font-semibold mb-5 sm:mb-8 border-b border-slate-800 pb-3 gap-1">
         <span className={step >= 1 ? 'text-yellow-400' : 'text-gray-600'}>
           <span className="sm:hidden">1. Info</span>
-          <span className="hidden sm:inline">1. Institution & Captain</span>
+          <span className="hidden sm:inline">1. Category & Captain</span>
         </span>
         <span className="text-gray-600 text-xs">➔</span>
         <span className={step >= 2 ? 'text-yellow-400' : 'text-gray-600'}>
@@ -183,45 +187,58 @@ export default function RegistrationPage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div className={`grid grid-cols-1 ${!isOpenCategory ? 'sm:grid-cols-2' : ''} gap-3.5`}>
               <div>
                 <label className="block text-xs font-semibold mb-1 text-gray-300">Institution Category *</label>
                 <select
                   value={formData.institution_type}
-                  onChange={(e) => setFormData({ ...formData, institution_type: e.target.value })}
+                  onChange={(e) => {
+                    const selectedType = e.target.value;
+                    setFormData({
+                      ...formData,
+                      institution_type: selectedType,
+                      institution_name: selectedType === 'Open Category' ? 'N/A' : '',
+                      batch_info: selectedType === 'Open Category' ? 'Open' : '',
+                    });
+                  }}
                   className="w-full bg-slate-800 border border-slate-700 px-3.5 py-2.5 rounded-lg text-sm outline-none focus:border-yellow-500"
                 >
-                  <option value="School">School</option>
+                  <option value="Open Category">Open Category</option>
                   <option value="College">College</option>
                   <option value="University">University</option>
                   <option value="Medical College">Medical College</option>
                 </select>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold mb-1 text-gray-300">Institution Name *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Rangpur Govt. City College"
-                  value={formData.institution_name}
-                  onChange={(e) => setFormData({ ...formData, institution_name: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 px-3.5 py-2.5 rounded-lg text-sm outline-none focus:border-yellow-500"
-                />
-              </div>
+              {!isOpenCategory && (
+                <div>
+                  <label className="block text-xs font-semibold mb-1 text-gray-300">Institution Name *</label>
+                  <input
+                    type="text"
+                    required={!isOpenCategory}
+                    placeholder="e.g. Rangpur Govt. City College"
+                    value={formData.institution_name === 'N/A' ? '' : formData.institution_name}
+                    onChange={(e) => setFormData({ ...formData, institution_name: e.target.value })}
+                    className="w-full bg-slate-800 border border-slate-700 px-3.5 py-2.5 rounded-lg text-sm outline-none focus:border-yellow-500"
+                  />
+                </div>
+              )}
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-              <div>
-                <label className="block text-xs font-semibold mb-1 text-gray-300">Batch Info</label>
-                <input
-                  type="text"
-                  placeholder="e.g. HSC 26"
-                  value={formData.batch_info}
-                  onChange={(e) => setFormData({ ...formData, batch_info: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 px-3.5 py-2.5 rounded-lg text-sm outline-none focus:border-yellow-500"
-                />
-              </div>
+            <div className={`grid grid-cols-1 ${!isOpenCategory ? 'sm:grid-cols-3' : 'sm:grid-cols-2'} gap-3.5`}>
+              {!isOpenCategory && (
+                <div>
+                  <label className="block text-xs font-semibold mb-1 text-gray-300">Batch Info</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. HSC 26"
+                    value={formData.batch_info === 'Open' ? '' : formData.batch_info}
+                    onChange={(e) => setFormData({ ...formData, batch_info: e.target.value })}
+                    className="w-full bg-slate-800 border border-slate-700 px-3.5 py-2.5 rounded-lg text-sm outline-none focus:border-yellow-500"
+                  />
+                </div>
+              )}
+
               <div>
                 <label className="block text-xs font-semibold mb-1 text-gray-300">Captain Name *</label>
                 <input
@@ -232,6 +249,7 @@ export default function RegistrationPage() {
                   className="w-full bg-slate-800 border border-slate-700 px-3.5 py-2.5 rounded-lg text-sm outline-none focus:border-yellow-500"
                 />
               </div>
+
               <div>
                 <label className="block text-xs font-semibold mb-1 text-gray-300">Phone Number *</label>
                 <input

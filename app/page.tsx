@@ -16,7 +16,7 @@ export default function HomePage() {
           CRICKET CARNIVAL
         </p>
         <p className="text-xs sm:text-sm text-gray-400 mt-3 max-w-xl mx-auto leading-relaxed">
-          One Match. One Festival. One Legacy. All schools, colleges, universities & medical colleges come together on one platform.
+          One Match. One Festival. One Legacy. All Open Categorys, colleges, universities & medical colleges come together on one platform.
         </p>
 
         <div className="mt-6 sm:mt-8 flex justify-center">
@@ -33,7 +33,7 @@ export default function HomePage() {
       <div className="max-w-5xl mx-auto px-4 py-4 sm:py-8 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         <div className="bg-slate-800/60 p-3 sm:p-4 rounded-xl border border-slate-700 text-center flex flex-col justify-center items-center">
           <Users className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400 mb-2" />
-          <h3 className="text-xl sm:text-2xl font-bold">16 Teams</h3>
+          <h3 className="text-xl sm:text-2xl font-bold">8 Teams</h3>
           <p className="text-[11px] sm:text-xs text-gray-400">Team Participation</p>
         </div>
         <div className="bg-slate-800/60 p-3 sm:p-4 rounded-xl border border-slate-700 text-center flex flex-col justify-center items-center">
@@ -59,7 +59,7 @@ export default function HomePage() {
         <div className="bg-slate-800/40 p-5 sm:p-6 rounded-2xl border border-slate-700">
           <h2 className="text-lg sm:text-xl font-bold text-yellow-400 mb-4">Eligibility Criteria</h2>
           <ul className="space-y-3 text-xs sm:text-sm text-gray-300">
-            <li>🏫 <strong>School:</strong> SSC Batch 25, 26, & 27</li>
+            <li>🏫 <strong>Open to All</strong></li>
             <li>🎓 <strong>College:</strong> HSC Batch 26 & 27</li>
             <li>🏛️ <strong>University:</strong> Honours (Current Batch)</li>
             <li>🏥 <strong>Medical College:</strong> Current Batch</li>
