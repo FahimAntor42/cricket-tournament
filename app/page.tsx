@@ -83,10 +83,10 @@ export default function HomePage() {
         <h2 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8">Board of Directors</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { name: 'Shakhawath Shakil', role: 'Spokesman & Director', sub: 'Management, Finance, Sponsor' },
-            { name: 'Hasibul Hasan Habib', role: 'Director', sub: 'Umpires' },
-            { name: 'Shahjaman Raj', role: 'Director', sub: 'Grounds' },
-            { name: 'Kower Ali Shaikot', role: 'Director', sub: 'Logistic' },
+            { name: 'Shakhawath Shakil', role: 'Founder & CEO', sub: 'Management, Finance, Sponsor' },
+            { name: 'Hasibul Hasan Habib', role: 'Director', sub: 'Umpires & Match Official' },
+            { name: 'Kowser Ali Shaikot', role: 'Director', sub: 'Grounds' },
+            { name: 'Fahim Fardin', role: 'Director', sub: 'Logistics' },
           ].map((dir, i) => (
             <div key={i} className="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center">
               <h3 className="font-bold text-sm text-white">{dir.name}</h3>
