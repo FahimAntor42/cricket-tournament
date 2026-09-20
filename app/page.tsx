@@ -48,7 +48,7 @@ export default function HomePage() {
         </div>
         <div className="bg-slate-800/60 p-3 sm:p-4 rounded-xl border border-slate-700 text-center flex flex-col justify-center items-center">
           <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400 mb-2" />
-          <h3 className="text-base sm:text-lg font-bold">04-17 Sept</h3>
+          <h3 className="text-base sm:text-lg font-bold">04-24 Sept</h3>
           <p className="text-[11px] sm:text-xs text-gray-400">Registration Window</p>
         </div>
       </div>
@@ -86,7 +86,7 @@ export default function HomePage() {
             { name: 'Shakhawath Shakil', role: 'Spokesman & Director', sub: 'Management, Finance, Sponsor' },
             { name: 'Hasibul Hasan Habib', role: 'Director', sub: 'Umpires' },
             { name: 'Shahjaman Raj', role: 'Director', sub: 'Grounds' },
-            { name: 'Fahim Fardin', role: 'Director', sub: 'Logistic' },
+            { name: 'Kower Ali Shaikot', role: 'Director', sub: 'Logistic' },
           ].map((dir, i) => (
             <div key={i} className="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center">
               <h3 className="font-bold text-sm text-white">{dir.name}</h3>
