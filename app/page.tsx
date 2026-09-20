@@ -85,8 +85,9 @@ export default function HomePage() {
           {[
             { name: 'Shakhawath Shakil', role: 'Founder & CEO', sub: 'Management, Finance, Sponsor' },
             { name: 'Hasibul Hasan Habib', role: 'Director', sub: 'Umpires & Match Official' },
-            { name: 'Kowser Ali Shaikot', role: 'Director', sub: 'Grounds' },
             { name: 'Fahim Fardin', role: 'Director', sub: 'Logistics' },
+            { name: 'Kowser Ali Shaikot', role: 'Director', sub: 'Grounds' },
+            
           ].map((dir, i) => (
             <div key={i} className="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center">
               <h3 className="font-bold text-sm text-white">{dir.name}</h3>
