@@ -83,7 +83,7 @@ export default function HomePage() {
         <h2 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8">Board of Directors</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { name: 'Shakhawath Shakil', role: 'Founder & CEO', sub: 'Management, Finance, Sponsor' },
+            { name: 'Shakhawath Shakil', role: 'Founder & CEO', sub: ''  },
             { name: 'Hasibul Hasan Habib', role: 'Director', sub: 'Umpires & Match Official' },
             { name: 'Fahim Fardin', role: 'Director', sub: 'Logistics' },
             { name: 'Kowser Ali Shaikot', role: 'Director', sub: 'Grounds' },
