@@ -105,7 +105,7 @@ export default function HomePage() {
         </p>
         <p className="flex justify-center items-center gap-1.5 text-gray-300 pt-1 flex-wrap">
           <Phone className="w-3.5 h-3.5 text-yellow-400 shrink-0" />
-          <span>Finance Director (Shakhawat Shakil):</span>
+          <span>Founder & CEO (Shakhawat Shakil):</span>
           <a href="tel:01352765784" className="font-bold hover:text-yellow-400 transition">01352765784</a>
         </p>
       </footer>
